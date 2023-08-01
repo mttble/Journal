@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import CategorySelection from './CategorySelection'
 import Home from './Home'
 import NewEntry from './NewEntry'
-import { BrowserRouter, Routes, Route, useParams, useNavigate } from "react-router-dom"
+import { Routes, Route, useParams, useNavigate } from "react-router-dom"
 import NavBar from './NavBar'
 import ShowEntry from './ShowEntry'
 
@@ -13,18 +13,13 @@ const seedEntries = [
 ]
 
 const App = () => {
-  let nav
+  const nav = useNavigate()
   const [entries, setEntries] = useState(seedEntries)
 
   // HOC (higher order component)
   function ShowEntryWrapper() {
     const { id } = useParams()
     return <ShowEntry entry ={entries[id]} />
-  }
-
-  function NewEntryWrapper() {
-    nav = useNavigate()
-    return <NewEntry addEntry={addEntry} />
   }
 
   function addEntry(category, content) {
@@ -37,21 +32,16 @@ const App = () => {
 
   return (
     <>
-      <BrowserRouter>
       <NavBar />
       <Routes>
         <Route path='/' element={<Home entries={entries} />} />
         <Route path='/category' element={<CategorySelection />} />
         <Route path= '/entry'>
           <Route path=":id" element={<ShowEntryWrapper />} />
-          <Route path='new/:category' element={<NewEntryWrapper />} />
+          <Route path='new/:category' element={<NewEntry addEntry={addEntry} />} />
         </Route>
         <Route path='*' element={<h3>Page not found</h3>} />
       </Routes>
-      </BrowserRouter>
-      {/* <Home />
-      <CategorySelection />
-      <NewEntry /> */}
     </>
   )
 }
