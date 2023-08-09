@@ -1,20 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Route, Routes, useNavigate, useParams } from "react-router-dom"
 import CategorySelection from './CategorySelection'
 import Home from './Home'
-import NewEntry from './NewEntry'
-import { Routes, Route, useParams, useNavigate } from "react-router-dom"
 import NavBar from './NavBar'
+import NewEntry from './NewEntry'
 import ShowEntry from './ShowEntry'
 
-const seedEntries = [
-  { category: 'Food', content: 'Pizza is yummy!'},
-  { category: 'Coding', content: 'Coding is fun!'},
-  { category: 'Gaming', content: 'Skyrim is for the Nords!'}
-]
+// const seedEntries = [
+//   { category: 'Food', content: 'Pizza is yummy!'},
+//   { category: 'Coding', content: 'Coding is fun!'},
+//   { category: 'Gaming', content: 'Skyrim is for the Nords!'}
+// ]
 
 const App = () => {
   const nav = useNavigate()
-  const [entries, setEntries] = useState(seedEntries)
+  const [entries, setEntries] = useState([])
+
+  useEffect(() => {
+    // closure (advanced way also known as IIFE)
+    (async () => {
+      const res = await fetch('http://localhost:5505/entries')
+      const data = await res.json()
+      setEntries(data)
+    })()
+  }, [])
+
+
+  // simple way
+  // useEffect(() => {
+  //   const getEntries = async () => {
+  //     const res = await fetch('http://localhost:5505/entries')
+  //     const data = await res.json()
+  //     setEntries(data)
+  //   }
+  //   getEntries()
+  // }, [])
 
   // HOC (higher order component)
   function ShowEntryWrapper() {
@@ -22,11 +42,17 @@ const App = () => {
     return <ShowEntry entry ={entries[id]} />
   }
 
-  function addEntry(category, content) {
+  async function addEntry(category, content) {
     const id = entries.length
     //  Add a new entry
-    const newEntry = { category, content }
-    setEntries([ ...entries, newEntry])
+    const returnedEntry = await fetch('http://localhost:5505/entries', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ category, content })
+    })
+    setEntries([ ...entries, await returnedEntry.json()])
     nav(`/entry/${id}`)
   }
 
