@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Route, Routes, useNavigate, useParams } from "react-router-dom"
+import { BrowserRouter, Route, Routes, useNavigate, useParams } from "react-router-dom"
 import CategorySelection from './CategorySelection'
 import Home from './Home'
 import NavBar from './NavBar'
@@ -19,7 +19,8 @@ const App = () => {
   useEffect(() => {
     // closure (advanced way also known as IIFE)
     (async () => {
-      const res = await fetch('http://localhost:5505/entries')
+      // localhost changes for deployment
+      const res = await fetch(`${import.meta.env.VITE_API_HOST}/entries`)
       const data = await res.json()
       setEntries(data)
     })()
@@ -45,7 +46,8 @@ const App = () => {
   async function addEntry(category, content) {
     const id = entries.length
     //  Add a new entry
-    const returnedEntry = await fetch('http://localhost:5505/entries', {
+    // localhost changes for deployment
+    const returnedEntry = await fetch(`${import.meta.env.VITE_API_HOST}/entries`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
