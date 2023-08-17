@@ -50,9 +50,9 @@ const App = () => {
     const returnedEntry = await fetch(`${import.meta.env.VITE_API_HOST}/entries`, {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ category, content })
+      body: JSON.stringify({ category, content }),
     })
     setEntries([ ...entries, await returnedEntry.json()])
     nav(`/entry/${id}`)
